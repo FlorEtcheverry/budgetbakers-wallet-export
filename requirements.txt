@@ -1,0 +1,2 @@
+# Wallet Extractor Dependencies
+selenium>=4.0.0
