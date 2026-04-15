@@ -22,34 +22,52 @@ src/
 │       └── dom_utils.py       # DOM parsing utilities
 ├── scripts/                   # Utility scripts
 │   └── json_to_csv.py        # JSON to CSV converter
-├── extract_wallet.py         # Main CLI script
-└── legacy/                   # Legacy files (moved here)
+├── extract_wallet.py         # ✅ Recommended CLI script → exports/transactions.json
+├── fast_extract.py           # Alternative fast extractor → export/transactions_fast.json
+├── main.py                   # Original prototype → export/out.json (no date parsing)
+├── main_enhanced.py          # Placeholder (empty)
+├── quick_test.py             # Quick sanity-check script
+├── test_driver.py            # WebDriver connectivity test
+└── legacy/                   # Archived debug/analysis scripts
     ├── main.py
     ├── config.py
-    └── debug_*.py
+    └── (debug scripts)
 ```
 
 ## 🚀 Usage
 
-### Basic Usage
+### Recommended
 
 ```bash
 cd src
 python extract_wallet.py
 ```
 
-### Advanced Usage
+Outputs → `export/transactions.json` with full date parsing, payee, labels, and type classification.
+
+### Options
 
 ```bash
-# Custom input/output files
+# Custom input/output paths
 python extract_wallet.py --input /path/to/wallet.html --output /path/to/output.json
 
-# Verbose output
+# Verbose output (shows sample transactions)
 python extract_wallet.py --verbose
 
-# Convert to CSV
+# Alternative fast extractor (same fields, slightly different DOM traversal)
+python fast_extract.py   # → export/transactions_fast.json
+
+# Convert JSON to CSV
 python scripts/json_to_csv.py --input ../export/transactions.json --output ../export/transactions.csv
 ```
+
+### Script Comparison
+
+| Script | Output | Date parsing | Payee/Labels | Notes |
+|---|---|---|---|---|
+| `extract_wallet.py` | `transactions.json` | ✅ DD/MM/YYYY | ✅ | **Recommended** — full CLI, modular |
+| `fast_extract.py` | `transactions_fast.json` | ✅ DD/MM/YYYY | ✅ | Same data, self-contained |
+| `main.py` | `out.json` | ❌ raw string | ❌ | Original prototype, kept for reference |
 
 ## 📊 Features
 

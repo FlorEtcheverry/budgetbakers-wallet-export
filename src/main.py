@@ -1,10 +1,8 @@
-import os
 import json
 
-from contextlib import redirect_stdout
-from config import *
 from selenium.webdriver.common.by import By
 
+from config import *
 
 if __name__ == "__main__":
     driver = configuration()
@@ -59,7 +57,7 @@ if __name__ == "__main__":
         cont = cont+1
     
     # Write proper JSON
-    with open('../export/out.json', 'w', encoding="utf-8") as f:
+    with open('../export/june25/out.json', 'w', encoding="utf-8") as f:
         json.dump(transactions, f, indent=2, ensure_ascii=False)
     
     print(f"Exported {len(transactions)} transactions to out.json")

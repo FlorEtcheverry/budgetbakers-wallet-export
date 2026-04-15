@@ -3,10 +3,9 @@
 Fast extraction script using the legacy approach but with improvements.
 """
 
+import json
 import os
 import sys
-import json
-import time
 from datetime import datetime
 
 # Add the src directory to Python path
@@ -15,26 +14,39 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from wallet_extractor.core import create_default_driver_manager
 from selenium.webdriver.common.by import By
 
-def parse_date_with_year(date_text, year=2025):
-    """Convert relative/partial dates to DD/MM/YYYY format."""
+def parse_date_with_year(date_text, year=None):
+    """Convert relative/partial dates to DD/MM/YYYY format.
+
+    Handles:
+      - "Today"           → current date
+      - "Month Day"       → current year (e.g. "April 15")
+      - "Month Day, Year" → explicit year (e.g. "March 2, 2026")
+    """
+    if year is None:
+        year = datetime.now().year
+
     if date_text.lower() == 'today':
         return datetime.now().strftime('%d/%m/%Y')
-    
+
     months = {
         'january': '01', 'february': '02', 'march': '03', 'april': '04',
         'may': '05', 'june': '06', 'july': '07', 'august': '08',
         'september': '09', 'october': '10', 'november': '11', 'december': '12'
     }
-    
+
     try:
-        parts = date_text.lower().split()
+        parts = date_text.replace(',', '').lower().split()
         if len(parts) == 2:
             month_name, day = parts
             month_num = months.get(month_name, '01')
             return f"{day.zfill(2)}/{month_num}/{year}"
+        if len(parts) == 3:
+            month_name, day, explicit_year = parts
+            month_num = months.get(month_name, '01')
+            return f"{day.zfill(2)}/{month_num}/{explicit_year}"
     except:
         pass
-    
+
     return date_text
 
 def determine_transaction_type(amount_text, description):

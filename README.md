@@ -41,16 +41,16 @@ pip install -r requirements.txt
 
 ### Usage
 
-#### Fast Extraction (Recommended)
-```bash
-cd src
-python fast_extract.py
-```
-
-#### Professional CLI Tool
+#### Recommended
 ```bash
 cd src
 python extract_wallet.py --verbose
+```
+
+#### Alternative Fast Extractor
+```bash
+cd src
+python fast_extract.py
 ```
 
 #### Convert to CSV
@@ -110,11 +110,13 @@ Key settings in `src/wallet_extractor/config.py`:
 - All extraction happens locally on your machine
 - No data is sent to external services
 
-## 📝 Legacy vs New Implementation
+## 📝 Script Overview
 
-- **Legacy**: `src/main.py` - Original implementation
-- **New**: `src/fast_extract.py` - Optimized for performance
-- **Professional**: `src/extract_wallet.py` - Full-featured CLI tool
+| Script | Output | Date parsing | Payee/Labels | Notes |
+|---|---|---|---|---|
+| `src/extract_wallet.py` | `export/transactions.json` | ✅ DD/MM/YYYY | ✅ | **Recommended** — full CLI, modular |
+| `src/fast_extract.py` | `export/transactions_fast.json` | ✅ DD/MM/YYYY | ✅ | Alternative, self-contained |
+| `src/main.py` | `export/out.json` | ❌ raw string | ❌ | Original prototype, kept for reference |
 
 ## 🤝 Contributing
 
