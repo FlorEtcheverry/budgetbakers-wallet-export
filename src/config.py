@@ -2,10 +2,11 @@ from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
 import os
 
-FILE_PATH = os.path.abspath("../site/Wallet by BudgetBakers.html")
+_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+FILE_PATH = os.path.join(_ROOT, "site", "Wallet by BudgetBakers.html")
 
 def configuration():
-    service = Service(executable_path="../geckodriver/geckodriver")
+    service = Service(executable_path=os.path.join(_ROOT, "geckodriver", "geckodriver"))
     options = webdriver.FirefoxOptions()
     options.binary_location = "/Applications/Firefox.app/Contents/MacOS/firefox"
     options.add_argument("--headless")  # Run in headless mode

@@ -12,15 +12,26 @@ A professional-grade tool for extracting transaction data from BudgetBakers Wall
 ### Installation
 
 1. Clone this repository:
-```bash
-git clone <your-repo-url>
-cd budgetbakers-wallet-export
-```
+    ```bash
+    git clone <your-repo-url>
+    cd budgetbakers-wallet-export
+    ```
 
 2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+
+   > **Note (macOS with Homebrew Python):** Python 3.12+ managed by Homebrew blocks system-wide package installs. Use a virtual environment instead:
+
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
+
+   > ⚠️ Always activate the virtual environment before running any scripts:
+   > ```bash
+   > source venv/bin/activate
+   > ```
+   > Your shell prompt will show `(venv)` when it is active.
 
 3. Download geckodriver (automated):
 ```bash
@@ -43,21 +54,23 @@ pip install -r requirements.txt
 
 #### Recommended
 ```bash
-cd src
-python extract_wallet.py --verbose
+source venv/bin/activate
+python src/extract_wallet.py --verbose [--input INPUT_FILE]
 ```
 
 #### Alternative Fast Extractor
 ```bash
-cd src
-python fast_extract.py
+source venv/bin/activate
+python src/fast_extract.py
 ```
 
 #### Convert to CSV
 ```bash
-cd src
-python scripts/json_to_csv.py
+source venv/bin/activate
+python src/scripts/json_to_csv.py
 ```
+
+> **Note:** Scripts use absolute paths internally, so they can be run from the project root or the `src/` directory.
 
 ## 📊 Features
 

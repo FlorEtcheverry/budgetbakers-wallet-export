@@ -80,7 +80,9 @@ def create_default_driver_manager() -> DriverManager:
     Returns:
         Configured DriverManager instance
     """
-    geckodriver_path = "../geckodriver/geckodriver"
+    # Resolve path relative to this file so it works regardless of working directory
+    _root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+    geckodriver_path = os.path.join(_root, "geckodriver", "geckodriver")
     firefox_binary_path = "/Applications/Firefox.app/Contents/MacOS/firefox"
     
     return DriverManager(

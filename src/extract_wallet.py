@@ -19,20 +19,22 @@ from wallet_extractor.core import WalletExtractor, create_default_driver_manager
 
 def main():
     """Main CLI function."""
+    _ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
     parser = argparse.ArgumentParser(
         description="Extract transaction data from BudgetBakers Wallet HTML files"
     )
     
     parser.add_argument(
         "--input", "-i",
-        default="../site/Wallet by BudgetBakers.html",
-        help="Path to input HTML file (default: ../site/Wallet by BudgetBakers.html)"
+        default=os.path.join(_ROOT, "site", "Wallet by BudgetBakers.html"),
+        help="Path to input HTML file"
     )
     
     parser.add_argument(
         "--output", "-o", 
-        default="../export/transactions.json",
-        help="Path to output JSON file (default: ../export/transactions.json)"
+        default=os.path.join(_ROOT, "export", "transactions.json"),
+        help="Path to output JSON file"
     )
     
     parser.add_argument(
@@ -65,46 +67,55 @@ def main():
     print(f"Output will be saved to: {output_path}")
     
     try:
-        # Create driver manager and extractor
-        driver_manager = create_default_driver_manager()
-        
-        with driver_manager as driver:
+        # Detect format: only start a browser for legacy HTML
+        with open(input_path, "r", encoding="utf-8") as f:
+            head = f.read(4096)
+        needs_browser = "mantine" not in head and "grid-cols-record-row" not in head
+
+        driver_ctx = None
+        driver = None
+        if needs_browser:
+            driver_manager = create_default_driver_manager()
+            driver_ctx = driver_manager
+            driver = driver_ctx.__enter__()
+
+        try:
             extractor = WalletExtractor(driver)
-            
-            # Load HTML file
             extractor.load_html_file(input_path)
-            
-            # Extract transactions
+
             print("Extracting transactions...")
             transactions = extractor.extract_transactions()
-            
-            # Save to JSON
+
             extractor.save_to_json(output_path)
-            
-            # Print statistics
+
             stats = extractor.get_statistics()
-            print(f"\n✅ Extraction completed successfully!")
-            print(f"📊 Statistics:")
-            print(f"   • Total transactions: {stats['total_transactions']}")
-            print(f"   • Income: {stats['income_transactions']}")
-            print(f"   • Expenses: {stats['expense_transactions']}")
-            print(f"   • Transfers: {stats['transfer_transactions']}")
-            print(f"   • With payee: {stats['transactions_with_payee']} ({stats['payee_coverage']})")
-            print(f"   • With labels: {stats['transactions_with_labels']} ({stats['label_coverage']})")
-            
+            print(f"\nExtraction completed successfully!")
+            print(f"Statistics:")
+            print(f"   Total transactions: {stats['total_transactions']}")
+            print(f"   Income: {stats['income_transactions']}")
+            print(f"   Expenses: {stats['expense_transactions']}")
+            print(f"   Transfers: {stats['transfer_transactions']}")
+            print(f"   With payee: {stats['transactions_with_payee']} ({stats['payee_coverage']})")
+            print(f"   With labels: {stats['transactions_with_labels']} ({stats['label_coverage']})")
+
             if args.verbose:
-                print(f"\n📝 Sample transactions:")
+                print(f"\nSample transactions:")
                 for i, transaction in enumerate(transactions[:3]):
-                    print(f"   {i+1}. {transaction.date} | {transaction.type} | {transaction.category} | {transaction.amount}")
+                    print(f"   {i+1}. {transaction.date} | {transaction.transaction_type} | {transaction.category} | {transaction.amount}")
                     if transaction.payee:
                         print(f"      Payee: {transaction.payee}")
                     if transaction.labels:
                         print(f"      Labels: {', '.join(transaction.labels)}")
-        
+        finally:
+            if driver_ctx:
+                driver_ctx.__exit__(None, None, None)
+
         return 0
-        
+
     except Exception as e:
-        print(f"❌ Error during extraction: {e}")
+        print(f"Error during extraction: {e}")
+        import traceback
+        traceback.print_exc()
         return 1
 
 

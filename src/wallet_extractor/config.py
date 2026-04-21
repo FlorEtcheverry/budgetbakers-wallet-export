@@ -15,8 +15,9 @@ class Config:
     
     # Browser settings
     FIREFOX_BINARY_PATH = "/Applications/Firefox.app/Contents/MacOS/firefox"
-    GECKODRIVER_PATH = "../geckodriver/geckodriver"
-    
+    _ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    GECKODRIVER_PATH = os.path.join(_ROOT, "geckodriver", "geckodriver")
+
     # CSS selectors
     MAIN_CONTAINER_SELECTOR = ".VypTY5DQ_tmahm5VdHFJK"
     TRANSACTION_SELECTOR = "._3wwqabSSUyshePYhPywONa"
